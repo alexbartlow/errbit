@@ -44,3 +44,6 @@
       %th Rel. Directory
       %td= notice.server_environment && notice.server_environment["project-root"]
 
+  #squash-section
+    = render partial: "notices/squash", locals: {notice: notice}
+

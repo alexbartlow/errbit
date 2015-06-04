@@ -1,0 +1,21 @@
+%h4
+  Squash:
+  - if notice.is_squashed?
+    %span(style="color: red") Squashed
+  - else
+    %span(style="color: green") Not Squashed
+
+- if notice.exception_class_squashed?
+  = link_to "Unsquash this Class", squashes_path(selector: "class", do: "undelete", notice_id: notice.id), class: "squash-button applied", remote:true, method: :post
+- else
+  = link_to "Squash this Class", squashes_path(selector: "class", notice_id: notice.id), class: "squash-button", remote: true, method: :post
+
+- if notice.class_and_message_squashed?
+  = link_to "Unsquash this Class and Message", squashes_path(selector: "messages", do: "undelete", notice_id: notice.id), class: "squash-button applied", remote:true, method: :post
+-else
+  = link_to "Squash this Class and Message", squashes_path(selector: "messages", notice_id: notice.id), class: "squash-button", remote: true, method: :post
+
+- if notice.class_message_and_fingerprint_squashed?
+  = link_to "Unsquash this Class and Message from this Backtrace", squashes_path(selector: "backtrace", do: "undelete", notice_id: notice.id), class: "squash-button applied", remote:true, method: :post
+-else
+  = link_to "Squash this Class and Message from this Backtrace", squashes_path(selector: "backtrace", notice_id: notice.id), class: "squash-button", remote: true, method: :post

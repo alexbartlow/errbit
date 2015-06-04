@@ -21,7 +21,8 @@ class Notice
   index(:err_id => 1, :created_at => 1, :_id => 1)
 
   after_create :cache_attributes_on_problem, :unresolve_problem
-  after_create :email_notification
+  after_create :email_notification, unless: :is_squashed?
+  after_create :services_notification, unless: :is_squashed?
   after_create :services_notification
   before_save :sanitize
   before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
@@ -114,7 +115,7 @@ class Notice
   end
 
   def emailable?
-    app.email_at_notices.include?(similar_count)
+    true
   end
 
   def should_email?
@@ -138,6 +139,34 @@ class Notice
     if server_environment
       server_environment['app-version'] || ''
     end
+  end
+
+  def is_squashed?
+    exception_class_squashed? || class_and_message_squashed? || class_message_and_fingerprint_squashed?
+  end
+
+  def exception_class_squashed?
+    Squash.where({
+      exception_class: self.error_class,
+      exception_message: nil,
+      backtrace_fingerprint: nil
+    }).exists?
+  end
+
+  def class_and_message_squashed?
+    Squash.where({
+      exception_class: self.error_class,
+      exception_message: self.message,
+      backtrace_fingerprint: nil
+    }).exists?
+  end
+
+  def class_message_and_fingerprint_squashed?
+    Squash.where({
+      exception_class: self.error_class,
+      exception_message: self.message,
+      backtrace_fingerprint: self.backtrace.fingerprint
+    }).exists?
   end
 
   protected

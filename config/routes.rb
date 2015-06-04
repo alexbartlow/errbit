@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/locate/:id' => 'notices#locate', :as => :locate
   post '/deploys.txt' => 'deploys#create'
 
+  resources :squashes, only: [:create]
   resources :notices,   :only => [:show]
   resources :deploys,   :only => [:show]
   resources :users do

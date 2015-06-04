@@ -1,0 +1,3 @@
+$("#squash-section").html( <%= escape_javascript(
+  render partial: "notices/squash", locals: {notice: notice}
+) %> );
